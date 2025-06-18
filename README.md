@@ -12,7 +12,7 @@ currencyapi-ruby is a simple Ruby wrapper for the CurrencyAPI, providing easy ac
 
 - Built-in error handling for API responses
 
-##Example Usage:
+## Example Usage:
 ```ruby
   require 'currencyapi'
 
@@ -42,11 +42,13 @@ Then run:
 ```ruby
 bundle install
 ```
+Or install it directly:
+
 ```ruby
 gem install currencyapi-ruby
 ```
 
 ## Links:
- - CurrencyAPI Docs - https://currencyapi.com/docs
+  - CurrencyAPI Docs - https://currencyapi.com/docs
 
   - Gem Source (replace with your repo link)

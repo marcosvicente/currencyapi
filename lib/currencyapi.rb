@@ -1,22 +1,18 @@
 # frozen_string_literal: true
+require 'httparty'
+require 'active_support'
+require 'active_support/inflector'
 
 require_relative "currencyapi/version"
 
 module Currencyapi
-  class Error < StandardError; end
-    attr_accessor :api_key
-    def currencies
-    end
+  autoload :Configuration, 'currencyapi/configuration'
+  autoload :Client, 'currencyapi/client'
+  autoload :Api, 'currencyapi/api'
 
-    def latest
+  class << self
+    def setup(&block)
+      Currencyapi::Configuration.setup(&block)
     end
-
-    def historical
-    end
-
-    def range
-    end
-
-    def convert
-    end
+  end
 end
