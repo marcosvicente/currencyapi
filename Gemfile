@@ -16,3 +16,6 @@ gem "httparty", '0.23.1'
 gem "pry"
 
 gem "activesupport", '>= 4.2'
+
+# gem 'dry-types', '>=1.8.3'
+gem 'dry-struct', '>=1.8.0'

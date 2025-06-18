@@ -9,99 +9,68 @@ module Currencyapi
         @param    = param
       end
 
-      def extract_meta(meta)
-        @meta = Currencyapi::Entity::Meta.new(meta)
-      end
-
-      def get(params)
-        response = HTTParty.get(parse_url, headers: get_headers, params: params)
-        parse_response(response)
+      def get_response
+        @response = HTTParty.get(parse_url, headers: get_headers, params: @params)
+        parse_response
       end
 
       protected
       def parse_url(id = nil)
         u = URI(@endpoint + @route)
-        if param
+        if @param.nil?
           u.path += "/#{param}"
         end
         u.to_s
       end
 
       def parse_response
-        res =  @response.response_code
-        case @response.response_code
-          when 200
-            res = response_success
-          when 400
-            res = response_bad_request
-          when 401
-            res = response_unauthorized
-          when 404
-            res = response_not_found
-          when 500
-            res = response_internal_server_error
-          else
-            res = response_not_found
+        if  @response.code == 200
+          res = response_success
+        else
+          res = errors_response
         end
         res
       end
 
-      def convert_data_to_entity(type)
-        if @api_version == 2
-          "Currencyapi::Entity::#{type.capitalize}".constantize
-        else
-          "Currencyapi::#{type.capitalize}".constantize
+      def errors_response
+        @errors = Array.new
+        case @response.code
+          when 400
+            response_bad_request
+          when 401
+            response_unauthorized
+          when 404
+            response_not_found
+          when 500
+            response_internal_server_error
+          else
+            response_internal_server_error
         end
-      rescue
-        Currencyapi::Entity::Base
       end
-
+      
       def response_success
-        entity = nil
-        hash = JSON.parse(@response.body)
-        if hash.fetch("object", false) === "list"
-          entity = Currencyapi::Entity::Meta.new(hash)
-        else
-          entity = convert_data_to_entity(hash.fetch("object", false))
-          entity = entity.new(hash) if entity
-        end
-
-        entity
+        response = JSON.parse(@response.body)
+        response
       end
 
       def response_unauthorized
-        error = Currencyapi::Entity::Error.new
-        error.errors << Currencyapi::Entity::ErrorItem.new(code: 'invalid_token', description: 'The api_key is invalid')
-        error
+         @errors  << Currencyapi::Entity::ErrorItem.new(code: @response.code, description: 'The api_key is invalid')
+        Currencyapi::Entity::Error.new(errors: @errors)
       end
 
       def response_internal_server_error
-        error = Currencyapi::Entity::Error.new
-        error.errors << Currencyapi::Entity::ErrorItem.new(code: 'internal_server_error', description: 'Internal Server Error')
-        error
+          @errors << Currencyapi::Entity::ErrorItem.new(code: @response.code, description: 'Internal Server Error')
+        Currencyapi::Entity::Error.new(errors: @errors)
       end
 
       def response_not_found
-        error = Currencyapi::Entity::Error.new
-        error.errors << Currencyapi::Entity::ErrorItem.new(code: 'not_found', description: 'Object not found')
-        error
+         @errors << Currencyapi::Entity::ErrorItem.new(code: @response.code, description: 'Object not found')
+        Currencyapi::Entity::Error.new(errors: @errors)
       end
 
       def response_bad_request
-        error = Currencyapi::Entity::Error.new
-        begin
-          hash = JSON.parse(@response.body)
-          errors = hash.fetch("errors", [])
-          errors.each do |item|
-            error.errors << Currencyapi::Entity::ErrorItem.new(item)
-          end
-          error
-        rescue
-          error = Currencyapi::Entity::Error.new
-          error.errors << Currencyapi::Entity::ErrorItem.new(code: 'bad_request', description: 'Bad Request')
-          error
-        end
-        error
+         @errors  << Currencyapi::Entity::ErrorItem.new(code: @response.code, description: 'Bad Request')
+        Currencyapi::Entity::Error.new(errors: @errors)
       end
 
       def get_headers

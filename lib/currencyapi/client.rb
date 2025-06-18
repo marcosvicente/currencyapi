@@ -8,7 +8,9 @@ class Currencyapi::Client
   end
 
   def convert(param)
-    @convert ||= Currencyapi::Api::Convert.new(@token, @api_version, param)
+    response = Currencyapi::Api::Convert.new(@token, @api_version, param)
+    
+    convert ||= response.get_response
   end
 
   def latest
