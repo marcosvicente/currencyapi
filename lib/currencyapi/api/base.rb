@@ -17,8 +17,8 @@ module Currencyapi
       protected
       def parse_url(id = nil)
         u = URI(@endpoint + @route)
-        if @param.nil?
-          u.path += "/#{param}"
+        unless @param.nil?
+          URI.encode_www_form(@param)
         end
         u.to_s
       end

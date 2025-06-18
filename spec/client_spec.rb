@@ -23,14 +23,15 @@ RSpec.describe Currencyapi::Client do
    end
    
    it "return json" do
-      allow(Currencyapi::Api::Convert).to receive(:convert).with(params).and_return(:response_convert)
+      allow_any_instance_of(described_class).to receive(:convert).with(params).and_return(response_convert)
       expect(@client.convert(params)).to eq(response_convert)
     end
   end
 
-   context '.latest' do 
+  context '.latest' do 
     it "return json" do
-      expect(client.latest).to eq("https://api.currencyapi.com/v3")
+      allow_any_instance_of(described_class).to receive(:latest).and_return(response_latest)
+      expect(@client.latest).to eq(response_latest)
     end
   end
 end
