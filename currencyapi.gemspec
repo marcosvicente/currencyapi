@@ -13,6 +13,13 @@ Gem::Specification.new do |spec|
   spec.homepage = "https://github.com/marcosvicente/currencyapi"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "rubocop", "~> 1.21"
+  spec.add_development_dependency "pry"
+  spec.add_dependency "httparty", '0.23.1'
+  spec.add_dependency "activesupport", '>= 4.2'
+  spec.add_dependency "dry-struct", '>=1.8.0'
 
   spec.metadata["allowed_push_host"] = "TODO: Set to your gem server 'https://example.com'"
 
