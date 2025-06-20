@@ -23,8 +23,10 @@ RSpec.describe Currencyapi::Client do
    end
    
    it "return json" do
-      allow_any_instance_of(described_class).to receive(:convert).with(params).and_return(response_convert)
-      expect(@client.convert(params)).to eq(response_convert)
+      convert_params = Currencyapi::Entity::Convert.new(params)
+
+      allow_any_instance_of(described_class).to receive(:convert).with(convert_params).and_return(response_convert)
+      expect(@client.convert(convert_params)).to eq(response_convert)
     end
   end
 

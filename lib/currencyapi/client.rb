@@ -7,8 +7,9 @@ class Currencyapi::Client
     @api_version = api_version || Currencyapi::Configuration.api_version
   end
 
-  def convert(param)
-    response = Currencyapi::Api::Convert.new(@token, @api_version, param)
+  def convert(params)
+    convert_params = Currencyapi::Entity::Convert.new(params)
+    response = Currencyapi::Api::Convert.new(@token, @api_version, convert_params)
     convert ||= response.get_response
   end
 
